@@ -1,0 +1,27 @@
+﻿version: "3.9"
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: agent_redis
+    restart: unless-stopped
+    networks:
+      - agent_net
+
+  app:
+    image: YOUR_DOCKERHUB_USERNAME/multi-agent:latest
+    container_name: agent_app
+    restart: unless-stopped
+    ports:
+      - "8100:8000"
+    env_file: .env
+    volumes:
+      - ./output:/app/output
+    depends_on:
+      - redis
+    networks:
+      - agent_net
+
+networks:
+  agent_net:
+    driver: bridge
